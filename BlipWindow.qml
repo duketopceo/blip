@@ -2,8 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
-import qs.Commons
-
+import qs.Commons as Commons
 // Blip window — the "actual app": a Messages.app-style two-pane window.
 //
 // Hosted INSIDE the Omarchy shell (like the dev-gallery's FloatingWindow), so
@@ -23,7 +22,7 @@ FloatingWindow {
   title: "Blip" + (hostWidget && hostWidget.unread > 0 ? " (" + hostWidget.unread + ")" : "")
   // Same fill as Omarchy's other FloatingWindow (dev gallery). A 0.70
   // alpha assumed Hyprland blur, which Omarchy 4.x ships off.
-  color: Color.background
+  color: Commons.Color.background
   implicitWidth: 1040
   implicitHeight: 720
   minimumSize: Qt.size(720, 480)
@@ -92,14 +91,14 @@ FloatingWindow {
       anchors.fill: parent
       // Inset from the window edge: Hyprland rounds the corners, and text
       // flush to the border got clipped by the radius (Fred).
-      anchors.margins: Style.space(12)
+      anchors.margins: Commons.Style.space(12)
       hostWidget: win.hostWidget
       splitView: true
       surfaceOpen: win.visible
       readActive: win.focused
-      foreground: Color.foreground
-      urgent: Color.urgent
-      fontFamily: Style.font.family
+      foreground: Commons.Color.foreground
+      urgent: Commons.Color.urgent
+      fontFamily: Commons.Style.font.family
       onNavigationFocusRequested: scope.forceActiveFocus()
     }
   }

@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import QtQuick.Effects
-import qs.Commons
+import qs.Commons as Commons
 import qs.Ui
 
 // Blip panel — threads, then an iMessage-style conversation with a compose box.
@@ -29,9 +29,9 @@ FocusScope {
   // The window may be visible but unfocused / on another workspace: it still
   // renders and refreshes, but must not mark conversations read (war room #25).
   property bool readActive: true
-  property color foreground: Color.foreground
-  property color urgent: Color.urgent
-  property string fontFamily: Style.font.family
+  property color foreground: Commons.Color.foreground
+  property color urgent: Commons.Color.urgent
+  property string fontFamily: Commons.Style.font.family
   readonly property color dim: Qt.darker(foreground, 1.45)
   /** An editor owns the keyboard — the host's key catcher must stand down. */
   readonly property bool editorActive:
@@ -40,13 +40,13 @@ FocusScope {
   readonly property real contentHeightHint: listContent.implicitHeight
   /** The view wants keyboard navigation focus back (list mode). */
   signal navigationFocusRequested()
-  // Palette follows the Omarchy theme (Fred, 2026-08-31). Color.* is the
+  // Palette follows the Omarchy theme (Fred, 2026-08-31). Commons.Color.* is the
   // live theme singleton — it hot-reloads on theme switch, so every accent,
   // bubble, and link repaints with the rest of the desktop. If the theme
   // ships no distinct accent (accent == foreground), fall back to iMessage
   // blue so "my" bubbles stay readable as mine.
-  readonly property bool themeHasAccent: Color.accent.toString() !== Color.foreground.toString()
-  readonly property color accent: themeHasAccent ? Color.accent : "#0a84ff"
+  readonly property bool themeHasAccent: Commons.Color.accent.toString() !== Commons.Color.foreground.toString()
+  readonly property color accent: themeHasAccent ? Commons.Color.accent : "#0a84ff"
   readonly property color cyan: accent            // legacy name; accents/links
   readonly property color okColor: accent
 
@@ -1052,11 +1052,11 @@ FocusScope {
         anchors.fill: parent
         // Gutters for the app: the popout's card supplies its own padding,
         // the window's panes had text flush against the borders (Fred).
-        anchors.leftMargin: root.splitView ? Style.space(18) : 0
-        anchors.rightMargin: root.splitView ? Style.space(18) : 0
-        anchors.topMargin: root.splitView ? Style.space(10) : 0
-        anchors.bottomMargin: root.splitView ? Style.space(10) : 0
-        spacing: Style.space(root.splitView ? 14 : 8)
+        anchors.leftMargin: root.splitView ? Commons.Style.space(18) : 0
+        anchors.rightMargin: root.splitView ? Commons.Style.space(18) : 0
+        anchors.topMargin: root.splitView ? Commons.Style.space(10) : 0
+        anchors.bottomMargin: root.splitView ? Commons.Style.space(10) : 0
+        spacing: Commons.Style.space(root.splitView ? 14 : 8)
         PanelHero {
           Layout.fillWidth: true
           title: "Blip"
@@ -1110,7 +1110,7 @@ FocusScope {
           ColumnLayout {
             id: listContent
             width: parent.width
-            spacing: root.inThread ? Style.space(2) : Style.space(root.splitView ? 10 : 6)
+            spacing: root.inThread ? Commons.Style.space(2) : Commons.Style.space(root.splitView ? 10 : 6)
 
             // ------------------------------------------------- OFFLINE
             Text {
@@ -1122,7 +1122,7 @@ FocusScope {
               textFormat: Text.PlainText
               color: root.dim
               font.family: root.fontFamily
-              font.pixelSize: Style.font.bodySmall
+              font.pixelSize: Commons.Style.font.bodySmall
               wrapMode: Text.WordWrap
             }
             // Reachable but broken — say exactly what to fix (Full Disk Access,
@@ -1135,7 +1135,7 @@ FocusScope {
               textFormat: Text.PlainText
               color: root.urgent
               font.family: root.fontFamily
-              font.pixelSize: Style.font.bodySmall
+              font.pixelSize: Commons.Style.font.bodySmall
               wrapMode: Text.WordWrap
             }
 
@@ -1186,7 +1186,7 @@ FocusScope {
                 textFormat: Text.PlainText
                 color: markAllHover.hovered ? root.mineFill : root.cyan
                 font.family: root.fontFamily
-                font.pixelSize: Style.font.caption
+                font.pixelSize: Commons.Style.font.caption
                 font.underline: markAllHover.hovered
                 HoverHandler { id: markAllHover; cursorShape: Qt.PointingHandCursor }
                 TapHandler { onTapped: root.markAllRead() }
@@ -1206,7 +1206,7 @@ FocusScope {
               foreground: root.foreground
               accent: root.accent
               font.family: root.fontFamily
-              font.pixelSize: Style.font.bodySmall
+              font.pixelSize: Commons.Style.font.bodySmall
               onAccepted: root.runContactSearch()
               Keys.onEscapePressed: root.exitNew()
             }
@@ -1218,7 +1218,7 @@ FocusScope {
               textFormat: Text.PlainText
               color: root.dim
               font.family: root.fontFamily
-              font.pixelSize: Style.font.caption
+              font.pixelSize: Commons.Style.font.caption
             }
 
             Repeater {
@@ -1226,8 +1226,8 @@ FocusScope {
               delegate: Rectangle {
                 required property var modelData
                 Layout.fillWidth: true
-                implicitHeight: contactRow.implicitHeight + Style.space(12)
-                radius: Style.cornerRadius
+                implicitHeight: contactRow.implicitHeight + Commons.Style.space(12)
+                radius: Commons.Style.cornerRadius
                 color: contactHover.hovered
                   ? Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.08)
                   : "transparent"
@@ -1238,16 +1238,16 @@ FocusScope {
                   anchors.left: parent.left
                   anchors.right: parent.right
                   anchors.verticalCenter: parent.verticalCenter
-                  anchors.leftMargin: Style.space(8)
-                  anchors.rightMargin: Style.space(8)
-                  spacing: Style.space(8)
+                  anchors.leftMargin: Commons.Style.space(8)
+                  anchors.rightMargin: Commons.Style.space(8)
+                  spacing: Commons.Style.space(8)
                   Text {
                     text: String(modelData.name || "")
                     textFormat: Text.PlainText
                     elide: Text.ElideRight
                     color: root.foreground
                     font.family: root.fontFamily
-                    font.pixelSize: Style.font.bodySmall
+                    font.pixelSize: Commons.Style.font.bodySmall
                     font.bold: true
                   }
                   Text {
@@ -1257,7 +1257,7 @@ FocusScope {
                     elide: Text.ElideRight
                     color: root.dim
                     font.family: root.fontFamily
-                    font.pixelSize: Style.font.caption
+                    font.pixelSize: Commons.Style.font.caption
                   }
                 }
               }
@@ -1271,7 +1271,7 @@ FocusScope {
               foreground: root.foreground
               accent: root.accent
               font.family: root.fontFamily
-              font.pixelSize: Style.font.bodySmall
+              font.pixelSize: Commons.Style.font.bodySmall
               onAccepted: root.runSearch()
               onActiveFocusChanged: if (activeFocus && !root.searching) root.searching = true
               Keys.onEscapePressed: root.exitSearch()
@@ -1286,10 +1286,10 @@ FocusScope {
               visible: root.online && root.listShowing && !root.searchShowing && !root.newMode
                        && root.pinnedThreads.length > 0
               columns: 3
-              columnSpacing: Style.space(8)
-              rowSpacing: Style.space(10)
-              Layout.topMargin: Style.space(8)
-              Layout.bottomMargin: Style.space(8)
+              columnSpacing: Commons.Style.space(8)
+              rowSpacing: Commons.Style.space(10)
+              Layout.topMargin: Commons.Style.space(8)
+              Layout.bottomMargin: Commons.Style.space(8)
 
               Repeater {
                 model: pinnedGrid.visible ? root.pinnedThreads : []
@@ -1297,8 +1297,8 @@ FocusScope {
                   required property var modelData
                   Layout.fillWidth: true
                   Layout.preferredWidth: Math.max(1, (pinnedGrid.width - pinnedGrid.columnSpacing * 2) / 3)
-                  implicitHeight: pinnedColumn.implicitHeight + Style.space(4)
-                  radius: Style.cornerRadius
+                  implicitHeight: pinnedColumn.implicitHeight + Commons.Style.space(4)
+                  radius: Commons.Style.cornerRadius
                   // j/k walk root.threads, and pinned threads sort FIRST in it —
                   // without this the cursor was invisible for those presses.
                   color: pinnedHover.hovered || root.cursor === root.threadIndex(modelData)
@@ -1313,7 +1313,7 @@ FocusScope {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.top: parent.top
-                    spacing: Style.space(4)
+                    spacing: Commons.Style.space(4)
 
                     Rectangle {
                       id: pinnedAvatar
@@ -1358,9 +1358,10 @@ FocusScope {
                         anchors.centerIn: parent
                         visible: pinnedAvatarImg.status !== Image.Ready
                         text: root.avatarInitials(modelData)
+                        textFormat: Text.PlainText
                         color: root.foreground
                         font.family: root.fontFamily
-                        font.pixelSize: Style.font.body
+                        font.pixelSize: Commons.Style.font.body
                         font.bold: true
                       }
                     }
@@ -1373,7 +1374,7 @@ FocusScope {
                       elide: Text.ElideRight
                       color: root.foreground
                       font.family: root.fontFamily
-                      font.pixelSize: Style.font.caption
+                      font.pixelSize: Commons.Style.font.caption
                       font.bold: modelData.unread > 0
                     }
                   }
@@ -1388,7 +1389,7 @@ FocusScope {
               textFormat: Text.PlainText
               color: root.dim
               font.family: root.fontFamily
-              font.pixelSize: Style.font.caption
+              font.pixelSize: Commons.Style.font.caption
             }
 
             Repeater {
@@ -1396,8 +1397,8 @@ FocusScope {
               delegate: Rectangle {
                 required property var modelData
                 Layout.fillWidth: true
-                implicitHeight: hitCol.implicitHeight + Style.space(12)
-                radius: Style.cornerRadius
+                implicitHeight: hitCol.implicitHeight + Commons.Style.space(12)
+                radius: Commons.Style.cornerRadius
                 color: hitHover.hovered
                   ? Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.08)
                   : "transparent"
@@ -1409,9 +1410,9 @@ FocusScope {
                   anchors.left: parent.left
                   anchors.right: parent.right
                   anchors.verticalCenter: parent.verticalCenter
-                  anchors.leftMargin: Style.space(8)
-                  anchors.rightMargin: Style.space(8)
-                  spacing: Style.space(2)
+                  anchors.leftMargin: Commons.Style.space(8)
+                  anchors.rightMargin: Commons.Style.space(8)
+                  spacing: Commons.Style.space(2)
                   RowLayout {
                     Layout.fillWidth: true
                     Text {
@@ -1422,7 +1423,7 @@ FocusScope {
                       elide: Text.ElideRight
                       color: root.foreground
                       font.family: root.fontFamily
-                      font.pixelSize: Style.font.bodySmall
+                      font.pixelSize: Commons.Style.font.bodySmall
                       font.bold: true
                     }
                     Text {
@@ -1430,7 +1431,7 @@ FocusScope {
                       textFormat: Text.PlainText
                       color: root.dim
                       font.family: root.fontFamily
-                      font.pixelSize: Style.font.caption
+                      font.pixelSize: Commons.Style.font.caption
                     }
                   }
                   Text {
@@ -1442,7 +1443,7 @@ FocusScope {
                     wrapMode: Text.WordWrap
                     color: root.dim
                     font.family: root.fontFamily
-                    font.pixelSize: Style.font.caption
+                    font.pixelSize: Commons.Style.font.caption
                   }
                 }
               }
@@ -1455,7 +1456,7 @@ FocusScope {
               textFormat: Text.PlainText
               color: root.dim
               font.family: root.fontFamily
-              font.pixelSize: Style.font.bodySmall
+              font.pixelSize: Commons.Style.font.bodySmall
               wrapMode: Text.WordWrap
             }
 
@@ -1466,8 +1467,8 @@ FocusScope {
                 required property int index
 
                 Layout.fillWidth: true
-                implicitHeight: rowRow.implicitHeight + Style.space(root.splitView ? 20 : 12)
-                radius: Style.cornerRadius
+                implicitHeight: rowRow.implicitHeight + Commons.Style.space(root.splitView ? 20 : 12)
+                radius: Commons.Style.cornerRadius
                 color: rowHover.hovered || root.cursor === root.threadIndex(modelData)
                   ? Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.08)
                   : "transparent"
@@ -1478,13 +1479,13 @@ FocusScope {
                 RowLayout {
                   id: rowRow
                   anchors.fill: parent
-                  anchors.margins: Style.space(6)
-                  spacing: Style.space(8)
+                  anchors.margins: Commons.Style.space(6)
+                  spacing: Commons.Style.space(8)
 
                   // the iMessage blue dot — present only while the thread has
                   // unread inbound; the slot stays so names line up.
                   Rectangle {
-                    width: Style.space(9); height: width; radius: width / 2
+                    width: Commons.Style.space(9); height: width; radius: width / 2
                     color: root.mineFill
                     opacity: modelData.unread > 0 ? 1 : 0
                   }
@@ -1493,7 +1494,7 @@ FocusScope {
                   // initials otherwise (the iMessage sidebar look)
                   Rectangle {
                     id: avatarCircle
-                    width: Style.space(30); height: width; radius: width / 2
+                    width: Commons.Style.space(30); height: width; radius: width / 2
                     color: Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.18)
                     // A group binds to ITS OWN chat id (its Messages group photo); a DM to
                     // the person. Binding a group to `handle` showed whoever spoke last —
@@ -1533,19 +1534,20 @@ FocusScope {
                       anchors.centerIn: parent
                       visible: avatarImg.status !== Image.Ready
                       text: root.avatarInitials(modelData)
+                      textFormat: Text.PlainText
                       color: root.foreground
                       font.family: root.fontFamily
-                      font.pixelSize: Style.font.caption
+                      font.pixelSize: Commons.Style.font.caption
                       font.bold: true
                     }
                   }
 
                   ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: Style.space(1)
+                    spacing: Commons.Style.space(1)
                     RowLayout {
                       Layout.fillWidth: true
-                      spacing: Style.space(6)
+                      spacing: Commons.Style.space(6)
                       Text {
                         Layout.fillWidth: true
                         text: String(modelData.name || modelData.chat)
@@ -1553,7 +1555,7 @@ FocusScope {
                         elide: Text.ElideRight
                         color: root.foreground
                         font.family: root.fontFamily
-                        font.pixelSize: Style.font.bodySmall
+                        font.pixelSize: Commons.Style.font.bodySmall
                         font.bold: modelData.unread > 0
                       }
                       Text {
@@ -1561,7 +1563,7 @@ FocusScope {
                         textFormat: Text.PlainText
                         color: modelData.unread > 0 ? root.mineFill : root.dim
                         font.family: root.fontFamily
-                        font.pixelSize: Style.font.caption
+                        font.pixelSize: Commons.Style.font.caption
                       }
                     }
                     Text {
@@ -1572,7 +1574,7 @@ FocusScope {
                       maximumLineCount: 1
                       color: root.dim
                       font.family: root.fontFamily
-                      font.pixelSize: Style.font.caption
+                      font.pixelSize: Commons.Style.font.caption
                     }
                   }
 
@@ -1602,14 +1604,14 @@ FocusScope {
         anchors.fill: parent
         // Gutters for the app: the popout's card supplies its own padding,
         // the window's panes had text flush against the borders (Fred).
-        anchors.leftMargin: root.splitView ? Style.space(18) : 0
-        anchors.rightMargin: root.splitView ? Style.space(18) : 0
-        anchors.topMargin: root.splitView ? Style.space(10) : 0
-        anchors.bottomMargin: root.splitView ? Style.space(10) : 0
-        spacing: Style.space(8)
+        anchors.leftMargin: root.splitView ? Commons.Style.space(18) : 0
+        anchors.rightMargin: root.splitView ? Commons.Style.space(18) : 0
+        anchors.topMargin: root.splitView ? Commons.Style.space(10) : 0
+        anchors.bottomMargin: root.splitView ? Commons.Style.space(10) : 0
+        spacing: Commons.Style.space(8)
         RowLayout {
           Layout.fillWidth: true
-          spacing: Style.space(8)
+          spacing: Commons.Style.space(8)
           PanelHero {
             Layout.fillWidth: true
             title: root.inThread ? String(root.active.name || root.active.chat) : "Select a conversation"
@@ -1628,7 +1630,7 @@ FocusScope {
           PanelActionButton {
             visible: root.splitView && !root.newMode
             Layout.alignment: Qt.AlignTop
-            Layout.topMargin: Style.space(6)
+            Layout.topMargin: Commons.Style.space(6)
             iconText: "＋"
             tooltipText: "New message (n)"
             bordered: true
@@ -1712,7 +1714,7 @@ FocusScope {
           ColumnLayout {
             id: content
             width: parent.width
-            spacing: root.inThread ? Style.space(2) : Style.space(6)
+            spacing: root.inThread ? Commons.Style.space(2) : Commons.Style.space(6)
 
             // ------------------------------------------- CONVERSATION
             Text {
@@ -1722,7 +1724,7 @@ FocusScope {
               horizontalAlignment: Text.AlignHCenter
               color: root.dim
               font.family: root.fontFamily
-              font.pixelSize: Style.font.caption
+              font.pixelSize: Commons.Style.font.caption
             }
 
             Repeater {
@@ -1733,33 +1735,34 @@ FocusScope {
                 readonly property bool mine: modelData.from_me === true
 
                 Layout.fillWidth: true
-                spacing: Style.space(2)
+                spacing: Commons.Style.space(2)
 
                 // day divider — "Today", "Yesterday", "Aug 28"
                 Text {
                   Layout.fillWidth: true
                   visible: String(modelData.day || "") !== ""
                   text: String(modelData.day || "")
+                  textFormat: Text.PlainText
                   horizontalAlignment: Text.AlignHCenter
                   color: root.dim
                   font.family: root.fontFamily
-                  font.pixelSize: Style.font.caption
+                  font.pixelSize: Commons.Style.font.caption
                   font.bold: true
-                  topPadding: Style.space(10)
-                  bottomPadding: Style.space(4)
+                  topPadding: Commons.Style.space(10)
+                  bottomPadding: Commons.Style.space(4)
                 }
 
                 // in a group, iMessage names the sender above each run of theirs
                 Text {
                   Layout.alignment: Qt.AlignLeft
-                  Layout.leftMargin: Style.space(10)
-                  Layout.topMargin: Style.space(6)
+                  Layout.leftMargin: Commons.Style.space(10)
+                  Layout.topMargin: Commons.Style.space(6)
                   visible: root.activeIsGroup && !bubbleRow.mine && modelData.groupStart === true
                   text: String(modelData.name || "")
                   textFormat: Text.PlainText
                   color: root.dim
                   font.family: root.fontFamily
-                  font.pixelSize: Style.font.caption
+                  font.pixelSize: Commons.Style.font.caption
                 }
 
                 // "You unsent a message" tombstone replaces a retracted bubble
@@ -1773,9 +1776,9 @@ FocusScope {
                     textFormat: Text.PlainText
                     color: root.dim
                     font.family: root.fontFamily
-                    font.pixelSize: Style.font.caption
+                    font.pixelSize: Commons.Style.font.caption
                     font.italic: true
-                    padding: Style.space(4)
+                    padding: Commons.Style.space(4)
                   }
                   Item { Layout.fillWidth: true; visible: !bubbleRow.mine }
                 }
@@ -1784,28 +1787,28 @@ FocusScope {
                 RowLayout {
                   Layout.fillWidth: true
                   visible: !modelData.retracted && String(modelData.replyText || "") !== ""
-                  Layout.topMargin: modelData.groupStart ? Style.space(6) : 0
+                  Layout.topMargin: modelData.groupStart ? Commons.Style.space(6) : 0
                   spacing: 0
                   Item { Layout.fillWidth: true; visible: bubbleRow.mine }
                   Rectangle {
-                    Layout.preferredWidth: Math.min(Math.ceil(replySnippet.implicitWidth) + Style.space(18), Math.round(content.width * 0.7))
-                    Layout.preferredHeight: Math.ceil(replySnippet.implicitHeight) + Style.space(10)
-                    radius: Style.space(12)
+                    Layout.preferredWidth: Math.min(Math.ceil(replySnippet.implicitWidth) + Commons.Style.space(18), Math.round(content.width * 0.7))
+                    Layout.preferredHeight: Math.ceil(replySnippet.implicitHeight) + Commons.Style.space(10)
+                    radius: Commons.Style.space(12)
                     color: "transparent"
                     border.color: root.dim
                     border.width: 1
                     opacity: 0.75
                     Text {
                       id: replySnippet
-                      x: Style.space(9); y: Style.space(5)
-                      width: Math.round(content.width * 0.7) - Style.space(18)
+                      x: Commons.Style.space(9); y: Commons.Style.space(5)
+                      width: Math.round(content.width * 0.7) - Commons.Style.space(18)
                       text: "↩ " + (modelData.replyMine ? "You: " : "") + String(modelData.replyText || "")
                       textFormat: Text.PlainText
                       elide: Text.ElideRight
                       maximumLineCount: 1
                       color: root.dim
                       font.family: root.fontFamily
-                      font.pixelSize: Style.font.caption
+                      font.pixelSize: Commons.Style.font.caption
                     }
                   }
                   Item { Layout.fillWidth: true; visible: !bubbleRow.mine }
@@ -1847,7 +1850,7 @@ FocusScope {
                       root.isImageMime(chipRow.modelData.mime) &&
                       chipRow.fileUrl !== undefined && chipRow.fileUrl !== ""
                     Layout.fillWidth: true
-                    Layout.topMargin: index === 0 && bubbleRow.modelData.groupStart ? Style.space(6) : 0
+                    Layout.topMargin: index === 0 && bubbleRow.modelData.groupStart ? Commons.Style.space(6) : 0
                     spacing: 0
                     Item { Layout.fillWidth: true; visible: bubbleRow.mine }
 
@@ -1879,16 +1882,16 @@ FocusScope {
                       Layout.preferredWidth: status === Image.Ready ? Math.min(maxW, implicitWidth) : maxW
                       Layout.preferredHeight: status === Image.Ready && implicitWidth > 0
                         ? Layout.preferredWidth * implicitHeight / implicitWidth
-                        : Style.space(120)
+                        : Commons.Style.space(120)
                       HoverHandler { cursorShape: Qt.PointingHandCursor }
                       TapHandler { onTapped: root.openAttachment(chipRow.modelData) }
                     }
 
                     Rectangle {
                       visible: !chipRow.showImage
-                      Layout.preferredWidth: Math.ceil(chipText.implicitWidth) + Style.space(18)
-                      Layout.preferredHeight: Math.ceil(chipText.implicitHeight) + Style.space(12)
-                      radius: Style.space(14)
+                      Layout.preferredWidth: Math.ceil(chipText.implicitWidth) + Commons.Style.space(18)
+                      Layout.preferredHeight: Math.ceil(chipText.implicitHeight) + Commons.Style.space(12)
+                      radius: Commons.Style.space(14)
                       color: bubbleRow.mine ? root.mineFill : root.theirsFill
                       opacity: 0.85
                       Text {
@@ -1903,7 +1906,7 @@ FocusScope {
                         textFormat: Text.PlainText
                         color: bubbleRow.mine ? root.mineText : root.theirsText
                         font.family: root.fontFamily
-                        font.pixelSize: Style.font.caption
+                        font.pixelSize: Commons.Style.font.caption
                       }
                       HoverHandler { cursorShape: Qt.PointingHandCursor }
                       TapHandler { onTapped: root.openAttachment(chipRow.modelData) }
@@ -1925,7 +1928,7 @@ FocusScope {
                   onBareUrlChanged: if (bareUrl !== "") root.requestPreview(bareUrl)
                   visible: !modelData.retracted && (!!modelData.link || !!fetched)
                   Layout.fillWidth: true
-                  Layout.topMargin: modelData.groupStart ? Style.space(6) : 0
+                  Layout.topMargin: modelData.groupStart ? Commons.Style.space(6) : 0
                   spacing: 0
                   // same anchoring as the chips: a card image completing ABOVE
                   // the viewport must not shove the reader's position.
@@ -1948,9 +1951,9 @@ FocusScope {
                     readonly property string imgUrl: modelData.link
                       ? (link.image_id ? String(root.attFiles[String(link.image_id)] || "") : "")
                       : String((linkRow.fetched && linkRow.fetched.image) || "")
-                    Layout.preferredWidth: Math.min(Math.round(content.width * 0.62), Style.space(380))
+                    Layout.preferredWidth: Math.min(Math.round(content.width * 0.62), Commons.Style.space(380))
                     Layout.preferredHeight: linkCol.implicitHeight
-                    radius: Style.space(14)
+                    radius: Commons.Style.space(14)
                     clip: true
                     color: bubbleRow.mine ? root.mineFill : root.theirsFill
                     ColumnLayout {
@@ -1962,7 +1965,7 @@ FocusScope {
                         visible: linkCard.imgUrl !== "" && status === Image.Ready
                         Layout.fillWidth: true
                         Layout.preferredHeight: visible && implicitWidth > 0
-                          ? Math.min(Style.space(220), Math.round(linkCard.width * implicitHeight / implicitWidth))
+                          ? Math.min(Commons.Style.space(220), Math.round(linkCard.width * implicitHeight / implicitWidth))
                           : 0
                         source: linkCard.imgUrl
                         asynchronous: true
@@ -1973,8 +1976,8 @@ FocusScope {
                       }
                       ColumnLayout {
                         Layout.fillWidth: true
-                        Layout.margins: Style.space(10)
-                        spacing: Style.space(2)
+                        Layout.margins: Commons.Style.space(10)
+                        spacing: Commons.Style.space(2)
                         Text {
                           Layout.fillWidth: true
                           visible: text !== ""
@@ -1985,7 +1988,7 @@ FocusScope {
                           elide: Text.ElideRight
                           color: bubbleRow.mine ? root.mineText : root.theirsText
                           font.family: root.fontFamily
-                          font.pixelSize: Style.font.bodySmall
+                          font.pixelSize: Commons.Style.font.bodySmall
                           font.bold: true
                         }
                         Text {
@@ -1999,7 +2002,7 @@ FocusScope {
                           color: bubbleRow.mine ? root.mineText : root.theirsText
                           opacity: 0.85
                           font.family: root.fontFamily
-                          font.pixelSize: Style.font.caption
+                          font.pixelSize: Commons.Style.font.caption
                         }
                         Text {
                           Layout.fillWidth: true
@@ -2009,7 +2012,7 @@ FocusScope {
                           color: bubbleRow.mine ? root.mineText : root.theirsText
                           opacity: 0.6
                           font.family: root.fontFamily
-                          font.pixelSize: Style.font.caption
+                          font.pixelSize: Commons.Style.font.caption
                         }
                       }
                     }
@@ -2026,8 +2029,8 @@ FocusScope {
                 RowLayout {
                   Layout.fillWidth: true
                   // a tapback pill overlaps the top edge — leave room for it
-                  Layout.topMargin: (modelData.groupStart ? Style.space(6) : 0)
-                                    + ((modelData.tapbacks || []).length > 0 ? Style.space(12) : 0)
+                  Layout.topMargin: (modelData.groupStart ? Commons.Style.space(6) : 0)
+                                    + ((modelData.tapbacks || []).length > 0 ? Commons.Style.space(12) : 0)
                   visible: !modelData.retracted &&
                            (String(modelData.text || "") !== "" || (modelData.attachments || []).length === 0) &&
                            // a message that is ONLY the URL shows just the card,
@@ -2041,10 +2044,10 @@ FocusScope {
 
                   Rectangle {
                     id: bubble
-                    readonly property real maxInner: Math.round(content.width * 0.78) - Style.space(22)
-                    Layout.preferredWidth: Math.ceil(bubbleText.contentWidth) + Style.space(22)
-                    Layout.preferredHeight: Math.ceil(bubbleText.contentHeight) + Style.space(14)
-                    radius: Style.space(16)
+                    readonly property real maxInner: Math.round(content.width * 0.78) - Commons.Style.space(22)
+                    Layout.preferredWidth: Math.ceil(bubbleText.contentWidth) + Commons.Style.space(22)
+                    Layout.preferredHeight: Math.ceil(bubbleText.contentHeight) + Commons.Style.space(14)
+                    radius: Commons.Style.space(16)
                     color: bubbleRow.mine ? root.mineFill : root.theirsFill
 
                     // iMessage squares off the corner nearest the sender on the
@@ -2060,7 +2063,7 @@ FocusScope {
                     // can be highlighted and Ctrl+C'd like any other text.
                     TextEdit {
                       id: bubbleText
-                      x: Style.space(11); y: Style.space(7)
+                      x: Commons.Style.space(11); y: Commons.Style.space(7)
                       width: bubble.maxInner
                       // html is pre-escaped + linkified in thread.ts (tested);
                       // plain messages keep the cheap PlainText path.
@@ -2077,7 +2080,7 @@ FocusScope {
                       selectionColor: bubbleRow.mine ? "#ffffff" : root.mineFill
                       selectedTextColor: bubbleRow.mine ? root.mineFill : "#ffffff"
                       font.family: root.fontFamily
-                      font.pixelSize: Style.font.bodySmall
+                      font.pixelSize: Commons.Style.font.bodySmall
                       onActiveFocusChanged: root.bubbleFocused = activeFocus
                       Keys.onEscapePressed: { deselect(); composeField.forceActiveFocus() }
                       // Ctrl+C through wl-copy: Qt's own clipboard does not reliably
@@ -2117,24 +2120,24 @@ FocusScope {
                     // tapback pill overlapping the corner opposite the tail
                     Rectangle {
                       visible: (modelData.tapbacks || []).length > 0
-                      width: Math.ceil(tapbackText.implicitWidth) + Style.space(12)
-                      height: Math.ceil(tapbackText.implicitHeight) + Style.space(8)
+                      width: Math.ceil(tapbackText.implicitWidth) + Commons.Style.space(12)
+                      height: Math.ceil(tapbackText.implicitHeight) + Commons.Style.space(8)
                       radius: height / 2
                       color: bubbleRow.mine ? Qt.darker(root.mineFill, 2.2) : root.mineFill
                       border.color: Qt.rgba(0, 0, 0, 0.5)
                       border.width: 2
                       anchors.top: parent.top
-                      anchors.topMargin: -Style.space(12)
+                      anchors.topMargin: -Commons.Style.space(12)
                       anchors.right: bubbleRow.mine ? undefined : parent.right
-                      anchors.rightMargin: bubbleRow.mine ? 0 : -Style.space(6)
+                      anchors.rightMargin: bubbleRow.mine ? 0 : -Commons.Style.space(6)
                       anchors.left: bubbleRow.mine ? parent.left : undefined
-                      anchors.leftMargin: bubbleRow.mine ? -Style.space(6) : 0
+                      anchors.leftMargin: bubbleRow.mine ? -Commons.Style.space(6) : 0
                       Text {
                         id: tapbackText
                         anchors.centerIn: parent
                         text: root.tapbackRow(modelData.tapbacks)
                         textFormat: Text.PlainText
-                        font.pixelSize: Style.font.caption
+                        font.pixelSize: Commons.Style.font.caption
                       }
                     }
                   }
@@ -2152,8 +2155,8 @@ FocusScope {
                   spacing: 0
                   Item { Layout.fillWidth: true; visible: bubbleRow.mine }
                   Text {
-                    Layout.rightMargin: bubbleRow.mine ? Style.space(6) : 0
-                    Layout.leftMargin: bubbleRow.mine ? 0 : Style.space(6)
+                    Layout.rightMargin: bubbleRow.mine ? Commons.Style.space(6) : 0
+                    Layout.leftMargin: bubbleRow.mine ? 0 : Commons.Style.space(6)
                     text: [modelData.failed === true ? "⚠ Not Delivered" : "",
                            String(modelData.time || ""),
                            modelData.edited === true ? "Edited" : "",
@@ -2164,8 +2167,8 @@ FocusScope {
                     color: modelData.failed === true ? root.urgent : root.dim
                     font.bold: modelData.failed === true
                     font.family: root.fontFamily
-                    font.pixelSize: Style.font.caption
-                    bottomPadding: Style.space(4)
+                    font.pixelSize: Commons.Style.font.caption
+                    bottomPadding: Commons.Style.space(4)
                   }
                   Item { Layout.fillWidth: true; visible: !bubbleRow.mine }
                 }
@@ -2177,14 +2180,14 @@ FocusScope {
                   spacing: 0
                   Item { Layout.fillWidth: true }
                   Text {
-                    Layout.rightMargin: Style.space(6)
+                    Layout.rightMargin: Commons.Style.space(6)
                     text: String(modelData.receipt || "")
                     textFormat: Text.PlainText
                     color: root.dim
                     font.family: root.fontFamily
-                    font.pixelSize: Style.font.caption
+                    font.pixelSize: Commons.Style.font.caption
                     font.bold: true
-                    bottomPadding: Style.space(4)
+                    bottomPadding: Commons.Style.space(4)
                   }
                 }
 
@@ -2199,7 +2202,7 @@ FocusScope {
               textFormat: Text.PlainText
               color: root.dim
               font.family: root.fontFamily
-              font.pixelSize: Style.font.bodySmall
+              font.pixelSize: Commons.Style.font.bodySmall
             }
           }
         }
@@ -2216,9 +2219,9 @@ FocusScope {
           visible: root.inThread && root.draftPath !== ""
           spacing: 0
           Rectangle {
-            Layout.preferredWidth: Math.ceil(draftText.implicitWidth) + Style.space(18)
-            Layout.preferredHeight: Math.ceil(draftText.implicitHeight) + Style.space(12)
-            radius: Style.space(14)
+            Layout.preferredWidth: Math.ceil(draftText.implicitWidth) + Commons.Style.space(18)
+            Layout.preferredHeight: Math.ceil(draftText.implicitHeight) + Commons.Style.space(12)
+            radius: Commons.Style.space(14)
             color: root.mineFill
             opacity: 0.9
             Text {
@@ -2230,7 +2233,7 @@ FocusScope {
               textFormat: Text.PlainText
               color: root.mineText
               font.family: root.fontFamily
-              font.pixelSize: Style.font.caption
+              font.pixelSize: Commons.Style.font.caption
             }
             HoverHandler { cursorShape: Qt.PointingHandCursor }
             TapHandler { onTapped: root.clearDraft() }
@@ -2241,7 +2244,7 @@ FocusScope {
         RowLayout {
           Layout.fillWidth: true
           visible: root.inThread
-          spacing: Style.space(6)
+          spacing: Commons.Style.space(6)
 
           TextField {
             id: composeField
@@ -2258,7 +2261,7 @@ FocusScope {
             foreground: root.foreground
             accent: root.mineFill
             font.family: root.fontFamily
-            font.pixelSize: Style.font.bodySmall
+            font.pixelSize: Commons.Style.font.bodySmall
             onAccepted: root.send()
             Keys.onEscapePressed: root.back()
             // Ctrl+V goes through paste.ts: an image on the clipboard becomes
@@ -2275,14 +2278,14 @@ FocusScope {
           // send button — the blue arrow circle (lit when text OR a file is queued)
           Rectangle {
             readonly property bool armed: composeField.text.trim() !== "" || root.draftPath !== ""
-            width: Style.space(28); height: width; radius: width / 2
+            width: Commons.Style.space(28); height: width; radius: width / 2
             color: armed ? root.mineFill : Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.15)
             Text {
               anchors.centerIn: parent
               text: "↑"
               color: parent.armed ? "#ffffff" : root.dim
               font.family: root.fontFamily
-              font.pixelSize: Style.font.body
+              font.pixelSize: Commons.Style.font.body
               font.bold: true
             }
             TapHandler { onTapped: root.send() }
@@ -2296,7 +2299,7 @@ FocusScope {
           textFormat: Text.PlainText
           color: root.note === "sending…" ? root.dim : root.urgent
           font.family: root.fontFamily
-          font.pixelSize: Style.font.caption
+          font.pixelSize: Commons.Style.font.caption
           wrapMode: Text.WordWrap
         }
       }
@@ -2336,49 +2339,51 @@ FocusScope {
     Rectangle {
       id: shareCard
       anchors.centerIn: parent
-      width: Math.min(parent.width - Style.space(32), Style.space(360))
-      height: shareCol.implicitHeight + Style.space(28)
-      radius: Style.cornerRadius
-      color: Color.background
+      width: Math.min(parent.width - Commons.Style.space(32), Commons.Style.space(360))
+      height: shareCol.implicitHeight + Commons.Style.space(28)
+      radius: Commons.Style.cornerRadius
+      color: Commons.Color.background
       border.color: Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.18)
       border.width: 1
       TapHandler { }   // swallow clicks on the card so they never reach the scrim
       ColumnLayout {
         id: shareCol
         anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
-        anchors.margins: Style.space(14)
-        spacing: Style.space(8)
+        anchors.margins: Commons.Style.space(14)
+        spacing: Commons.Style.space(8)
         Text {
           Layout.fillWidth: true
           text: "SHARE LINK"
           color: Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.6)
-          font.family: root.fontFamily; font.pixelSize: Style.font.caption; font.letterSpacing: 1
+          font.family: root.fontFamily; font.pixelSize: Commons.Style.font.caption; font.letterSpacing: 1
         }
         Text {
           Layout.fillWidth: true
           text: root.linkHost(root.shareUrl)
+          textFormat: Text.PlainText
           color: root.foreground
-          font.family: root.fontFamily; font.pixelSize: Style.font.body; font.bold: true
+          font.family: root.fontFamily; font.pixelSize: Commons.Style.font.body; font.bold: true
           elide: Text.ElideRight
         }
         Text {
           Layout.fillWidth: true
           text: root.shareUrl
+          textFormat: Text.PlainText
           color: Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.7)
-          font.family: root.fontFamily; font.pixelSize: Style.font.caption
+          font.family: root.fontFamily; font.pixelSize: Commons.Style.font.caption
           elide: Text.ElideMiddle
           maximumLineCount: 1
         }
         // QR for a phone camera: white quiet zone so dark themes scan.
         Rectangle {
           Layout.alignment: Qt.AlignHCenter
-          Layout.topMargin: Style.space(4)
-          width: Style.space(176); height: width
-          radius: Style.cornerRadius
+          Layout.topMargin: Commons.Style.space(4)
+          width: Commons.Style.space(176); height: width
+          radius: Commons.Style.cornerRadius
           color: "white"
           visible: root.shareQr !== ""
           Image {
-            anchors.fill: parent; anchors.margins: Style.space(8)
+            anchors.fill: parent; anchors.margins: Commons.Style.space(8)
             source: root.shareQr
             fillMode: Image.PreserveAspectFit
             smooth: false
@@ -2394,16 +2399,17 @@ FocusScope {
           delegate: Rectangle {
             required property var modelData
             Layout.fillWidth: true
-            height: Style.space(40)
-            radius: Style.cornerRadius
+            height: Commons.Style.space(40)
+            radius: Commons.Style.cornerRadius
             color: shareHover.hovered
               ? Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.12)
               : Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.06)
             Text {
               anchors.centerIn: parent
               text: modelData.label
+              textFormat: Text.PlainText
               color: root.foreground
-              font.family: root.fontFamily; font.pixelSize: Style.font.bodySmall
+              font.family: root.fontFamily; font.pixelSize: Commons.Style.font.bodySmall
             }
             HoverHandler { id: shareHover; cursorShape: Qt.PointingHandCursor }
             TapHandler {
@@ -2420,7 +2426,7 @@ FocusScope {
           horizontalAlignment: Text.AlignHCenter
           text: "Esc closes"
           color: Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.45)
-          font.family: root.fontFamily; font.pixelSize: Style.font.caption
+          font.family: root.fontFamily; font.pixelSize: Commons.Style.font.caption
         }
       }
     }

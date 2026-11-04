@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import qs.Commons
+import qs.Commons as Commons
 import qs.Ui
 
 // blip — iMessage in the bar.
@@ -632,7 +632,7 @@ BarWidget {
     hasVisualContent: true
     labelVisible: false
     keepSpace: true
-    fixedWidth: content.implicitWidth + Style.spaceReal(horizontalMargin) * 2
+    fixedWidth: content.implicitWidth + Commons.Style.spaceReal(horizontalMargin) * 2
     dimmed: !root.online
     active: root.hasUnread
     useActiveColor: false
@@ -646,7 +646,7 @@ BarWidget {
     Row {
       id: content
       anchors.centerIn: parent
-      spacing: Style.spaceReal(4)
+      spacing: Commons.Style.spaceReal(4)
 
       Text {
         anchors.verticalCenter: parent.verticalCenter
@@ -656,7 +656,7 @@ BarWidget {
         textFormat: Text.PlainText
         color: root.hasUnread ? root.blipAccent : button.foreground
         font.family: button.fontFamily
-        font.pixelSize: Style.font.body
+        font.pixelSize: Commons.Style.font.body
         renderType: Text.NativeRendering
       }
 
@@ -667,7 +667,7 @@ BarWidget {
         textFormat: Text.PlainText
         color: root.blipAccent
         font.family: button.fontFamily
-        font.pixelSize: Style.font.bodySmall
+        font.pixelSize: Commons.Style.font.bodySmall
         font.bold: true
         renderType: Text.NativeRendering
       }
@@ -678,5 +678,5 @@ BarWidget {
   // accents, and red must stay reserved for genuine alerts (see larry.status).
   // Follows the Omarchy theme accent (falls back to cyan if the theme has none).
   readonly property color blipAccent:
-    Color.accent.toString() !== Color.foreground.toString() ? Color.accent : "#5fd7ff"
+    Commons.Color.accent.toString() !== Commons.Color.foreground.toString() ? Commons.Color.accent : "#5fd7ff"
 }
