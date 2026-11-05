@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import qs.Commons
+import qs.Commons as Commons
 import qs.Ui
 
 // Blip panel — threads, then an iMessage-style conversation with a compose box.
@@ -60,14 +60,14 @@ Panel {
     bar: root.bar
     open: root.opened
     focusTarget: view.inThread ? view.composeEditor : keyCatcher
-    contentWidth: panel.fittedContentWidth(Style.space(440))
+    contentWidth: panel.fittedContentWidth(Commons.Style.space(440))
     // The floor keeps the panel usable if a mode flip's relayout ever lags
     // again — search/new modes always have at least a field to show.
     contentHeight: panel.fittedContentHeight(
-      view.inThread ? Style.space(640)
+      view.inThread ? Commons.Style.space(640)
         : Math.max(view.contentHeightHint,
-                   (view.newMode || view.searching) ? Style.space(280) : 0),
-      Style.space(640))
+                   (view.newMode || view.searching) ? Commons.Style.space(280) : 0),
+      Commons.Style.space(640))
 
     PanelKeyCatcher {
       id: keyCatcher
@@ -89,9 +89,9 @@ Panel {
         anchors.fill: parent
         hostWidget: root.hostWidget
         surfaceOpen: root.opened
-        foreground: root.bar ? root.bar.foreground : Color.foreground
-        urgent: root.bar ? root.bar.urgent : Color.urgent
-        fontFamily: root.bar ? root.bar.fontFamily : Style.font.family
+        foreground: root.bar ? root.bar.foreground : Commons.Color.foreground
+        urgent: root.bar ? root.bar.urgent : Commons.Color.urgent
+        fontFamily: root.bar ? root.bar.fontFamily : Commons.Style.font.family
         onNavigationFocusRequested: keyCatcher.forceActiveFocus()
       }
     }
