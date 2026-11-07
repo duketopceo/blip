@@ -553,7 +553,13 @@ FocusScope {
     // Flipping several visibilities in one handler can miss the layout
     // pass — the panel collapsed to its hero until results forced a
     // rearrange (Fred's screenshot). Force it.
-    Qt.callLater(function() { content.forceLayout(); newField.forceActiveFocus(); newField.selectAll() })
+    Qt.callLater(function() { forceRelayout(); newField.forceActiveFocus(); newField.selectAll() })
+  }
+
+  // Qt 6.12 removed QQuickLayout::forceLayout(); guarded call keeps the
+  // nudge where it exists and relies on the automatic polish where it does not.
+  function forceRelayout() {
+    if (typeof content.forceLayout === "function") content.forceLayout()
   }
 
   function exitNew() {
@@ -561,7 +567,7 @@ FocusScope {
     newResults = []
     newNote = ""
     newField.text = ""
-    Qt.callLater(function() { content.forceLayout(); root.navigationFocusRequested() })
+    Qt.callLater(function() { forceRelayout(); root.navigationFocusRequested() })
   }
 
   // Same identity discipline as message search: a stale completion must
